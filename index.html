@@ -831,20 +831,21 @@
                     const addedPkgs = addedItems.map(p => `${p.name} (added)`);
                     const allPkgs = [...originalPkgs, ...addedPkgs];
                     
+                    // Get individual total
+                    const individualTotal = getDisplayTotal(order);
+                    
                     report += `${index + 1}. ${order.name}\n`;
-                    report += `   ${allPkgs.join(', ')}\n\n`;
+                    report += `   ${allPkgs.join(', ')}\n`;
+                    report += `   💵 $${individualTotal.toFixed(2)}\n\n`;
                 });
                 
-                // Add summary
                 report += `─────────────────\n`;
-                report += `Total: $${stats.revenue.toFixed(2)}\n`;
-                report += `\n- PVME "We Got You"`;
+                report += `- PVME "We Got You"`;
                 
                 // Encode for SMS URL
                 const encodedReport = encodeURIComponent(report);
                 
                 // Open SMS app with pre-filled message
-                // sms: works on iOS, sms:?body= works cross-platform
                 window.location.href = `sms:?&body=${encodedReport}`;
             };
 
