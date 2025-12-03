@@ -800,6 +800,54 @@
                 }
             };
 
+            const sendTextReport = () => {
+                if (filteredOrders.length === 0) {
+                    alert('No orders to report. Apply filters first.');
+                    return;
+                }
+                
+                // Build header info
+                const currentDay = dayFilter || 'All Days';
+                const currentPlatoon = platoonFilter || 'All Platoons';
+                
+                let report = `PVME Picture Day Report\n`;
+                report += `📅 ${currentDay}\n`;
+                report += `🎖️ ${currentPlatoon}\n`;
+                report += `📊 ${filteredOrders.length} Orders\n`;
+                report += `─────────────────\n\n`;
+                
+                // Sort orders by name
+                const sortedOrders = [...filteredOrders].sort((a, b) => {
+                    const nameA = (a.name || '').toString();
+                    const nameB = (b.name || '').toString();
+                    return nameA.localeCompare(nameB);
+                });
+                
+                // Build order list
+                sortedOrders.forEach((order, index) => {
+                    // Get all packages including added items
+                    const originalPkgs = order.packages.map(p => p.name);
+                    const addedItems = getAddedItems(order.id);
+                    const addedPkgs = addedItems.map(p => `${p.name} (added)`);
+                    const allPkgs = [...originalPkgs, ...addedPkgs];
+                    
+                    report += `${index + 1}. ${order.name}\n`;
+                    report += `   ${allPkgs.join(', ')}\n\n`;
+                });
+                
+                // Add summary
+                report += `─────────────────\n`;
+                report += `Total: $${stats.revenue.toFixed(2)}\n`;
+                report += `\n- PVME "We Got You"`;
+                
+                // Encode for SMS URL
+                const encodedReport = encodeURIComponent(report);
+                
+                // Open SMS app with pre-filled message
+                // sms: works on iOS, sms:?body= works cross-platform
+                window.location.href = `sms:?&body=${encodedReport}`;
+            };
+
             const styles = {
                 header: {
                     background: 'linear-gradient(135deg, #ca8a04 0%, #a16207 100%)',
@@ -1089,6 +1137,9 @@
                             </button>
                             <button style={styles.btn} onClick={() => setShowFulfillment(true)}>
                                 📋 Fulfillment
+                            </button>
+                            <button style={{...styles.btn, background: '#1e3a5f', color: '#60a5fa'}} onClick={sendTextReport}>
+                                📱 Text Report
                             </button>
                             <button style={styles.btn} onClick={exportCSV}>
                                 💾 Export
