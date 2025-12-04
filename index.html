@@ -842,11 +842,28 @@
                 report += `─────────────────\n`;
                 report += `- PVME "We Got You"`;
                 
-                // Encode for SMS URL
-                const encodedReport = encodeURIComponent(report);
+                // Check if mobile device
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                 
-                // Open SMS app with pre-filled message
-                window.location.href = `sms:?&body=${encodedReport}`;
+                if (isMobile) {
+                    // Open SMS app with pre-filled message
+                    const encodedReport = encodeURIComponent(report);
+                    window.location.href = `sms:?&body=${encodedReport}`;
+                } else {
+                    // Desktop: copy to clipboard
+                    navigator.clipboard.writeText(report).then(() => {
+                        alert('📋 Report copied to clipboard!\n\nPaste it into Messages, email, or any app.');
+                    }).catch(() => {
+                        // Fallback for older browsers
+                        const textarea = document.createElement('textarea');
+                        textarea.value = report;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        alert('📋 Report copied to clipboard!\n\nPaste it into Messages, email, or any app.');
+                    });
+                }
             };
 
             const styles = {
