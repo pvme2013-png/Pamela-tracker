@@ -800,7 +800,7 @@
                 }
             };
 
-            const sendTextReport = () => {
+            const generateSMSReport = () => {
                 if (filteredOrders.length === 0) {
                     alert('No orders to report. Apply filters first.');
                     return;
@@ -1156,8 +1156,8 @@
                             <button style={styles.btn} onClick={() => setShowFulfillment(true)}>
                                 📋 Fulfillment
                             </button>
-                            <button style={{...styles.btn, background: '#1e3a5f', color: '#60a5fa'}} onClick={sendTextReport}>
-                                📱 Text Report
+                            <button style={{...styles.btn, background: '#1e3a5f', color: '#60a5fa'}} onClick={generateSMSReport}>
+                                📨 SMS Report
                             </button>
                             <button style={styles.btn} onClick={exportCSV}>
                                 💾 Export
